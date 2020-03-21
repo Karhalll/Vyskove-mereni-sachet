@@ -11,4 +11,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/VolneMereni.unity
     guid: c3727021b97a5fb4897f507aa6f15507
-  m_configObjects: {}
+  m_configObjects:
+    com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 4226a12cf1409f545b13e001f74e6c04,
+      type: 2}

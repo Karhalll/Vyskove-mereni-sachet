@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Globalization;
 using UnityEngine;
 using UnityEngine.UI;
+
+using VZT.Utillities;
 
 namespace VZT.Core
 {
@@ -12,17 +15,33 @@ namespace VZT.Core
         [SerializeField] InputField mereniNovy = null;
         [SerializeField] Text vysledekText = null;
 
+        float fixFloat;
+        float mereniFixFloat;
+        float mereniNovyFloat;
+
+        CultureInfo culture = CultureInfo.CreateSpecificCulture("en-EN");
+
+        private void Start() 
+        {
+            Recalculate();
+        }
+
         public void Recalculate()
         {
-            float fixFloat = (float)Convert.ToDecimal(fix.text);
-            float mereniFixFloat = (float)Convert.ToDecimal(mereniFix.text);
-            float mereniNovyFloat = (float)Convert.ToDecimal(mereniNovy.text);
+            GetMesurementValues();
 
             float vysledek = fixFloat + mereniFixFloat - mereniNovyFloat;
 
-            float vyseldek2DP = Mathf.Round(vysledek * 100f) / 100f;
+            float vyseldek2DP = Mathf.Round(vysledek * 1000f) / 1000f;
 
-            vysledekText.text = vyseldek2DP.ToString("###.00");
+            vysledekText.text = vyseldek2DP.ToString("##0.00#");
+        }
+
+        private void GetMesurementValues()
+        {
+            fixFloat = InputFieldConvertor.TextToFloat(fix);
+            mereniFixFloat = InputFieldConvertor.TextToFloat(mereniFix);
+            mereniNovyFloat = InputFieldConvertor.TextToFloat(mereniNovy);
         }
     }
 }
