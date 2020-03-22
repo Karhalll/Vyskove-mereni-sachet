@@ -1,0 +1,1 @@
+- po uložení a načtení bodů se vynuluje Input Field...způsobuje při editaci vymazání předchozích dat

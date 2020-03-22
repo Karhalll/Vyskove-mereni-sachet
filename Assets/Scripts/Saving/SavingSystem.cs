@@ -29,6 +29,20 @@ namespace GameDevTV.Saving
         }
 
         /// <summary>
+        /// Save the current scene after delay to the provided save file.
+        /// </summary>
+        public void SaveAfterDelay(string saveFile, float delay)
+        {
+            StartCoroutine(DelayedSave(saveFile, delay));
+        }
+
+        private IEnumerator DelayedSave (string saveFile, float delay)
+        {
+            yield return new WaitForSeconds(delay);
+            Save(saveFile);
+        }
+
+        /// <summary>
         /// Save the current scene to the provided save file.
         /// </summary>
         public void Save(string saveFile)

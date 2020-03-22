@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 using VZT.Utillities;
+using GameDevTV.Saving;
 
 public class Point : MonoBehaviour
 {
@@ -16,21 +17,37 @@ public class Point : MonoBehaviour
     [SerializeField] Button saveEditButton = null;
     [SerializeField] Button discardEditButton = null;
 
-    string pointName = string.Empty;
-    float pointValue = 0f;
+    string _pointName;
+    public string pointName 
+    {
+        get { return _pointName; }
+        set
+        {
+            _pointName = value;
+            pointNameText.text = value;
+        }
+    }
+    
+    float _pointValue;
+    public float pointValue
+    {
+        get { return _pointValue; }
+        set
+        {
+            _pointValue = value;
+            pointValueText.text = value.ToString("##0.00");
+        }
+    }
 
     private void Awake() 
     {
         editPanel.gameObject.SetActive(false);
         EditButtonsActive(false);
-        SetName(((Text)editPanel.editName.placeholder).text);
-        SetValue(InputFieldConvertor.TextToFloat(editPanel.editValue));
+        pointName = ((Text)editPanel.editName.placeholder).text;
+        pointValue = InputFieldConvertor.TextToFloat(editPanel.editValue);
     }
 
-    private void Start() 
-    {
-    }
-
+    // functions used by buttons START
     public void SendSavedPoint()
     {
         GetComponentInParent<PointToUse>().UseSavedPoint(pointValueText);
@@ -43,13 +60,16 @@ public class Point : MonoBehaviour
 
     public void DeletePoint()
     {
+        FindObjectOfType<SavingSystem>().SaveAfterDelay("save", 0.1f);
         Destroy(gameObject);
     }
 
     public void SaveChanges()
     {
-        SetName(editPanel.editName.text);
-        SetValue(InputFieldConvertor.TextToFloat(editPanel.editValue));
+        pointName = editPanel.editName.text;
+        pointValue = InputFieldConvertor.TextToFloat(editPanel.editValue);
+
+        FindObjectOfType<SavingSystem>().Save("save");
 
         InEditMode(false);
     }
@@ -58,10 +78,15 @@ public class Point : MonoBehaviour
     {
         InEditMode(false);
     }
+    // functions used by buttons END
 
     private void InEditMode(bool state)
     {
         editPanel.gameObject.SetActive(state);
+
+        editPanel.editName.text = _pointName;
+        editPanel.editValue.text = _pointValue.ToString("##0.00");
+
         ButtonsActive(!state);
         EditButtonsActive(state);
         usePoint.gameObject.SetActive(!state);
@@ -69,45 +94,18 @@ public class Point : MonoBehaviour
 
     private void ButtonsActive(bool state)
     {
-        EditButtonVisible(state);
-        DeleteButtonVisible(state);
+        SetObjectActive(editButton, state);
+        SetObjectActive(deleteButton, state);
     }
 
     private void EditButtonsActive(bool state)
     {
-        saveEditButton.gameObject.SetActive(state);
-        discardEditButton.gameObject.SetActive(state);
+        SetObjectActive(saveEditButton, state);
+        SetObjectActive(discardEditButton, state);
     }
 
-    private void EditButtonVisible(bool switchState)
+    private void SetObjectActive(Button button, bool state)
     {
-        editButton.gameObject.SetActive(switchState);
-    }
-
-    private void DeleteButtonVisible(bool switchState)
-    {
-        deleteButton.gameObject.SetActive(switchState);
-    }
-
-    public string GetName()
-    {
-        return pointName;
-    }
-
-    public void SetName(string newName)
-    {
-        pointName = newName;
-        pointNameText.text = newName;
-    }
-
-    public float GetValue()
-    {
-        return pointValue;
-    }
-
-    public void SetValue(float newValue)
-    {
-        pointValue = newValue;
-        pointValueText.text = newValue.ToString("##0.00");
+        button.gameObject.SetActive(state);
     }
 }

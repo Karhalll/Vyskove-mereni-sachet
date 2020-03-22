@@ -31,6 +31,7 @@ public class PointToUse : MonoBehaviour, ISaveable
     {
         Point newPoint = Instantiate(pointPrefab, pointsParent);
         newPoint.EditPoint();
+        FindObjectOfType<SavingSystem>().Save("save");
     }
 
     public object CaptureState()
@@ -41,8 +42,8 @@ public class PointToUse : MonoBehaviour, ISaveable
         foreach (Point point in points)
         {
             PointData pointData = new PointData();
-            pointData.pointName = point.GetName();
-            pointData.pointValue = point.GetValue();
+            pointData.pointName = point.pointName;
+            pointData.pointValue = point.pointValue;
 
             pointsDir.Add(pointData);
         }
@@ -52,19 +53,24 @@ public class PointToUse : MonoBehaviour, ISaveable
 
     public void RestoreState(object state)
     {
-        Point[] oldPoints = GetComponentsInChildren<Point>();
-        foreach(Point point in oldPoints)
-        {
-            Destroy(point.gameObject);
-        }
+        DeleateCurrentPoints();
 
         List<PointData> points = (List<PointData>)state;
         foreach (PointData point in points)
         {
             Point loadedPoint = Instantiate(pointPrefab, pointsParent);
 
-            loadedPoint.SetName(point.pointName);
-            loadedPoint.SetValue(point.pointValue);
+            loadedPoint.pointName = point.pointName;
+            loadedPoint.pointValue = point.pointValue;
+        }
+    }
+
+    private void DeleateCurrentPoints()
+    {
+        Point[] oldPoints = GetComponentsInChildren<Point>();
+        foreach (Point point in oldPoints)
+        {
+            Destroy(point.gameObject);
         }
     }
 }
